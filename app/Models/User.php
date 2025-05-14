@@ -45,4 +45,21 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Get the subjects taught by this teacher
+     */
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'subject_teacher')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the attendance records marked by this teacher
+     */
+    public function markedAttendances()
+    {
+        return $this->hasMany(Attendance::class, 'marked_by');
+    }
 }

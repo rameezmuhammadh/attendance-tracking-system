@@ -4,23 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Subject extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'registration_number',
-        'first_name',
-        'last_name',
-        'is_first_year',
-        'class_id',
+        'name',
+        'code',
+        'credits',
         'department_id',
-        'email',
+        'description',
     ];
 
     /**
-     * Get the department this student belongs to
+     * Get the department this subject belongs to
      */
     public function department()
     {
@@ -28,59 +27,29 @@ class Subject extends Model
     }
 
     /**
-     * Get the class this student belongs to
+     * Get the teachers for this subject
      */
-    public function studentGroups()
+    public function teachers()
     {
-        return $this->belongsTo(StudentGroup::class, 'student_group_id');
+        return $this->belongsToMany(User::class, 'subject_teacher')
+            ->withTimestamps();
     }
 
     /**
-     * Get the subjects this student is enrolled in
+     * Get the students enrolled in this subject
      */
-    public function subjects()
+    public function students()
     {
-        return $this->belongsToMany(Subject::class, 'subject_student')
+        return $this->belongsToMany(Student::class, 'subject_student')
             ->withPivot('enrollment_date')
             ->withTimestamps();
     }
 
     /**
-     * Get the attendance records for this student
+     * Get the attendance records for this subject
      */
-    public function attendances()
+    public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
-    }
-
-    /**
-     * Calculate attendance percentage for a specific subject and date range
-     */
-    public function getAttendancePercentage($subjectId, $startDate, $endDate)
-    {
-        $totalDays = Attendance::where('student_id', $this->id)
-            ->where('subject_id', $subjectId)
-            ->whereBetween('date', [$startDate, $endDate])
-            ->count();
-
-        if ($totalDays === 0) {
-            return 0;
-        }
-
-        $presentDays = Attendance::where('student_id', $this->id)
-            ->where('subject_id', $subjectId)
-            ->whereBetween('date', [$startDate, $endDate])
-            ->where('is_present', true)
-            ->count();
-
-        return ($presentDays / $totalDays) * 100;
-    }
-
-    /**
-     * Get full name attribute
-     */
-    public function getFullNameAttribute()
-    {
-        return "{$this->first_name} {$this->last_name}";
     }
 }

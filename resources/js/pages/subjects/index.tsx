@@ -1,9 +1,19 @@
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import CustomPagination from '@/components/ui/custom-pagination';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
@@ -48,6 +58,8 @@ export default function Index({ subjects, params }: Props) {
     const [isLoading, setIsLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState(params.search || '');
     const [isLoaded, setIsLoaded] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [subjectToDelete, setSubjectToDelete] = useState<{ id: number; name: string; code: string } | null>(null);
     const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     // Set isLoaded to true after component mounts for animations
@@ -105,7 +117,6 @@ export default function Index({ subjects, params }: Props) {
 
         performSearch(searchTerm);
     };
-
     const clearSearch = () => {
         setSearchTerm('');
         setIsLoading(true);
@@ -119,6 +130,38 @@ export default function Index({ subjects, params }: Props) {
                 onFinish: () => setIsLoading(false),
             },
         );
+    };
+    const confirmDelete = (subject: { id: number; name: string; code: string }) => {
+        // First set the subject, then show modal to avoid race conditions
+        setSubjectToDelete(subject);
+        setTimeout(() => {
+            setShowDeleteModal(true);
+        }, 0);
+    };
+
+    const deleteSubjectConfirmed = () => {
+        if (!subjectToDelete) return;
+
+        const subjectId = subjectToDelete.id;
+        setIsLoading(true);
+
+        router.delete(route('subjects.destroy', subjectId), {
+            onSuccess: () => {
+                // Success handling if needed
+            },
+            onError: () => {
+                // Error handling if needed
+            },
+            onFinish: () => {
+                setIsLoading(false);
+                setShowDeleteModal(false);
+                // Delay the state reset slightly to ensure the modal closes first
+                setTimeout(() => {
+                    setSubjectToDelete(null);
+                }, 100);
+            },
+            preserveScroll: true,
+        });
     };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -200,33 +243,73 @@ export default function Index({ subjects, params }: Props) {
                                                         <MoreVerticalIcon />
                                                         <span className="sr-only">Open menu</span>
                                                     </Button>
-                                                </DropdownMenuTrigger>
+                                                </DropdownMenuTrigger>{' '}
                                                 <DropdownMenuContent align="end" className="w-32">
-                                                    <DropdownMenuItem>Edit</DropdownMenuItem>
-                                                    <DropdownMenuItem>Delete</DropdownMenuItem>
+                                                    <DropdownMenuItem asChild>
+                                                        <Link href={route('subjects.edit', subject.id)}>Edit</Link>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => confirmDelete(subject)}>Delete</DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>{' '}
-                            <TableFooter className="bg-background">
-                                <TableRow>
-                                    <TableCell colSpan={4}>
-                                        {isLoading ? (
-                                            <div className="flex justify-center p-4">
-                                                <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
-                                            </div>
-                                        ) : (
-                                            <CustomPagination links={subjects.meta.links} />
-                                        )}
-                                    </TableCell>
-                                </TableRow>
-                            </TableFooter>
                         </Table>
+                        <div className="flex items-center justify-end px-4 py-2">
+                            {isLoading ? (
+                                <div className="flex justify-center p-4">
+                                    <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
+                                </div>
+                            ) : (
+                                <CustomPagination links={subjects.meta.links} />
+                            )}
+                        </div>
                     </CardContent>
-                </Card>
-            </div>
+                </Card>{' '}
+            </div>{' '}
+            {/* Delete Confirmation Dialog */}
+            <AlertDialog
+                open={showDeleteModal}
+                onOpenChange={(open) => {
+                    setShowDeleteModal(open);
+                    // When closing without confirming delete, make sure we clean up
+                    if (!open) {
+                        setSubjectToDelete(null);
+                    }
+                }}
+            >
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Subject</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to delete <span className="font-medium">{subjectToDelete?.name}</span> ({subjectToDelete?.code})?{' '}
+                            This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel
+                            disabled={isLoading}
+                            onClick={() => {
+                                setShowDeleteModal(false);
+                                setSubjectToDelete(null);
+                            }}
+                        >
+                            Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction onClick={deleteSubjectConfirmed} disabled={isLoading}>
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Deleting...
+                                </>
+                            ) : (
+                                <>Delete</>
+                            )}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AppLayout>
     );
 }

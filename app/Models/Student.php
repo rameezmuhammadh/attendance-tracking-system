@@ -14,8 +14,8 @@ class Student extends Model
         'first_name',
         'last_name',
         'is_first_year',
-        'class_id',
         'department_id',
+        'student_group_id',
         'email',
     ];
 

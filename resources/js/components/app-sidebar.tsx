@@ -13,16 +13,19 @@ const mainNavItems: NavItem[] = [
         href: '/dashboard',
         icon: LayoutGrid,
     },
-        {
+    {
         title: 'Subjects',
         href: '/subjects',
         icon: BookOpen,
     },
+    {
+        title: 'Departments',
+        href: '/departments',
+        icon: Folder,
+    },
 ];
 
-const footerNavItems: NavItem[] = [
-
-];
+const footerNavItems: NavItem[] = [];
 
 export function AppSidebar() {
     return (

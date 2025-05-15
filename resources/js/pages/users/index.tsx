@@ -296,7 +296,7 @@ export default function Index({ users, departments, params }: Props) {
                                 </div>
                             </form>
                         </div>
-                        <div className="rounded-md border">
+                        <div className="rounded-md border px-2">
                             <Table>
                                 <TableHeader>
                                     <TableRow>

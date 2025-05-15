@@ -41,6 +41,31 @@ class UpdateStudentRequest extends FormRequest
             'is_first_year' => ['required', 'boolean'],
             'department_id' => ['required', 'exists:departments,id'],
             'student_group_id' => ['required', 'exists:student_groups,id'],
+            'subject_ids' => ['required', 'array'],
+            'subject_ids.*' => ['exists:subjects,id'],
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $data = $validator->getData();
+
+            // If student is first year, ensure they have selected between 3 and 5 subjects
+            if (isset($data['is_first_year']) && $data['is_first_year'] === true) {
+                $subjectCount = count($data['subject_ids'] ?? []);
+
+                if ($subjectCount < 3) {
+                    $validator->errors()->add('subject_ids', 'First-year students must select at least 3 subjects.');
+                }
+
+                if ($subjectCount > 5) {
+                    $validator->errors()->add('subject_ids', 'First-year students can select a maximum of 5 subjects.');
+                }
+            }
+        });
     }
 }

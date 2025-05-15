@@ -1,6 +1,7 @@
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -31,11 +32,19 @@ interface Department {
     code: string;
 }
 
-interface Props {
-    departments: Department[];
+interface Subject {
+    id: number;
+    name: string;
+    code: string;
+    description: string;
 }
 
-export default function Create({ departments }: Props) {
+interface Props {
+    departments: Department[];
+    subjects: Subject[];
+}
+
+export default function Create({ departments, subjects }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -43,6 +52,7 @@ export default function Create({ departments }: Props) {
         password_confirmation: '',
         role: 'teacher',
         department_id: '',
+        subject_ids: [] as number[],
     });
 
     const [showPassword, setShowPassword] = useState(false);
@@ -178,7 +188,6 @@ export default function Create({ departments }: Props) {
                                         </Select>
                                         <InputError message={errors.role} />
                                     </div>
-
                                     <div className="grid gap-2">
                                         <Label htmlFor="department">Department</Label>
                                         <Select
@@ -190,6 +199,7 @@ export default function Create({ departments }: Props) {
                                                 <SelectValue placeholder="Select a department" />
                                             </SelectTrigger>
                                             <SelectContent>
+                                                {' '}
                                                 {departments.data.map((department) => (
                                                     <SelectItem key={department.id} value={department.id.toString()}>
                                                         {department.name} ({department.code})
@@ -198,8 +208,49 @@ export default function Create({ departments }: Props) {
                                             </SelectContent>
                                         </Select>
                                         <InputError message={errors.department_id} />
-                                    </div>
+                                    </div>{' '}
                                 </div>
+
+                                {/* Subject selection for teachers */}
+                                {data.role === 'teacher' && (
+                                    <div className="mt-4">
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="subject_ids">
+                                                Subjects <span className="text-sm text-gray-500">(Maximum 3)</span>
+                                            </Label>
+                                            <div className="grid grid-cols-3 gap-2 rounded-md border p-4">
+                                                {subjects.data.map((subject) => (
+                                                    <div key={subject.id} className="flex items-center gap-4">
+                                                        <Checkbox
+                                                            id={`subject-${subject.id}`}
+                                                            checked={data.subject_ids.includes(subject.id)}
+                                                            onCheckedChange={(checked) => {
+                                                                if (checked) {
+                                                                    if (data.subject_ids.length < 3) {
+                                                                        setData('subject_ids', [...data.subject_ids, subject.id]);
+                                                                    }
+                                                                } else {
+                                                                    setData(
+                                                                        'subject_ids',
+                                                                        data.subject_ids.filter((id) => id !== subject.id),
+                                                                    );
+                                                                }
+                                                            }}
+                                                            disabled={
+                                                                processing || (data.subject_ids.length >= 3 && !data.subject_ids.includes(subject.id))
+                                                            }
+                                                        />
+                                                        <Label htmlFor={`subject-${subject.id}`} className="cursor-pointer">
+                                                            {subject.name} ({subject.code})
+                                                        </Label>
+                                                    </div>
+                                                ))}
+                                                {subjects.length === 0 && <p className="text-sm text-gray-500">No subjects available</p>}
+                                            </div>
+                                            <InputError message={errors.subject_ids} />
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div className="mt-6 flex items-center justify-end gap-4">
                                     <Button variant="outline" className="mt-2" disabled={processing}>

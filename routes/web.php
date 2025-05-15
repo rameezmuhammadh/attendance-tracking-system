@@ -24,6 +24,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/student-groups', StudentGroupController::class);
     Route::resource('/students', StudentController::class);
     Route::resource('/attendances', AttendanceController::class);
+
+    // Get students by subject for attendance marking
+    Route::post('/subject-students', [AttendanceController::class, 'getStudentsBySubject'])
+        ->name('subject.students');
 });
 
 require __DIR__ . '/settings.php';

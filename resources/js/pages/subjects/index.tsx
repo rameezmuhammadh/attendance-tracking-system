@@ -46,7 +46,7 @@ interface PaginatedData<T> {
 }
 
 interface Props {
-    subjects: PaginatedData<{ id: number; name: string; code: string }>;
+    subjects: PaginatedData<{ id: number; name: string; code: string; description: string }>;
     params: {
         search?: string;
         page?: number;
@@ -223,6 +223,7 @@ export default function Index({ subjects, params }: Props) {
                                     <TableHead className="w-[100px]">ID</TableHead>
                                     <TableHead>Name</TableHead>
                                     <TableHead>Code</TableHead>
+                                    <TableHead className="hidden max-w-[200px] lg:block">Description</TableHead>
                                     <TableHead>Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -232,6 +233,10 @@ export default function Index({ subjects, params }: Props) {
                                         <TableCell className="w-[100px]">{subject.id}</TableCell>
                                         <TableCell>{subject.name}</TableCell>
                                         <TableCell>{subject.code}</TableCell>
+                                        <TableCell className="hidden max-w-[200px] text-wrap lg:block">
+                                            {subject.description.length > 50 ? `${subject.description.substring(0, 50)}...` : subject.description}
+                                        </TableCell>
+                                        {/* Actions */}
                                         <TableCell>
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>

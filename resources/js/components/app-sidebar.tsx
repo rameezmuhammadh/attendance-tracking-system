@@ -33,6 +33,11 @@ const mainNavItems: NavItem[] = [
         href: '/student-groups',
         icon: GraduationCap,
     },
+    {
+        title: 'Students',
+        href: '/students',
+        icon: Users,
+    },
 ];
 
 const footerNavItems: NavItem[] = [];

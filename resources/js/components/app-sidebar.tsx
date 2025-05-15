@@ -38,6 +38,11 @@ const mainNavItems: NavItem[] = [
         href: '/students',
         icon: Users,
     },
+    {
+        title: 'Attendance',
+        href: '/attendances',
+        icon: Users,
+    },
 ];
 
 const footerNavItems: NavItem[] = [];

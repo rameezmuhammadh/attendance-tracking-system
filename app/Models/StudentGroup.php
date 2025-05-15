@@ -13,8 +13,6 @@ class StudentGroup extends Model
     protected $fillable = [
         'name',
         'department_id',
-        'year_level',
-        'section',
         'description',
     ];
 

@@ -22,7 +22,7 @@ class StudentController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Student::query()->with(['department', 'studentGroups'])->latest();
+        $query = Student::query()->with(['department', 'studentGroup'])->latest();
 
         // Search by student name, email, or registration number
         if ($search = $request->input('search')) {
@@ -122,7 +122,7 @@ class StudentController extends Controller
      */
     public function show(Student $student)
     {
-        $student->load(['department', 'studentGroups', 'subjects', 'attendances']);
+        $student->load(['department', 'studentGroup', 'subjects', 'attendances']);
         $subjects = Subject::all();
 
         return Inertia::render('students/show', [

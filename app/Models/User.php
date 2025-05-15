@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'department_id',
     ];
 
     /**
@@ -61,5 +63,13 @@ class User extends Authenticatable
     public function markedAttendances()
     {
         return $this->hasMany(Attendance::class, 'marked_by');
+    }
+
+    /**
+     * Get the department that this user belongs to
+     */
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
     }
 }

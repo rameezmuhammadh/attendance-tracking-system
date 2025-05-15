@@ -30,7 +30,7 @@ class Student extends Model
     /**
      * Get the class this student belongs to
      */
-    public function studentGroups()
+    public function studentGroup()
     {
         return $this->belongsTo(StudentGroup::class, 'student_group_id');
     }

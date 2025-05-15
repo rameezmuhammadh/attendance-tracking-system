@@ -24,14 +24,6 @@ class Department extends Model
     }
 
     /**
-     * Get the subjects belonging to this department
-     */
-    public function subjects()
-    {
-        return $this->hasMany(Subject::class);
-    }
-
-    /**
      * Get the students belonging to this department
      */
     public function students()

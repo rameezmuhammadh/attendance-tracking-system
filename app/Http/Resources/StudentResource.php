@@ -27,7 +27,7 @@ class StudentResource extends JsonResource
             'department_id' => $this->department_id,
             'email' => $this->email,
             'department' => new DepartmentResource($this->whenLoaded('department')),
-            'student_group' => new StudentGroupResource($this->whenLoaded('studentGroups')),
+            'student_group' => new StudentGroupResource($this->whenLoaded('studentGroup')),
             'subjects' => SubjectResource::collection($this->whenLoaded('subjects')),
             'attendances' => AttendanceResource::collection($this->whenLoaded('attendances')),
             'created_at' => (new Carbon($this->created_at))->format('Y-m-d H:i'),

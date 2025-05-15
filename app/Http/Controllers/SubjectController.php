@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreSubjectRequest;
 use App\Http\Requests\UpdateSubjectRequest;
 use App\Http\Resources\SubjectResource;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\StudentResource;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -71,7 +73,16 @@ class SubjectController extends Controller
      */
     public function show(Subject $subject)
     {
-        //
+        // Load related teachers and students with their departments
+        $subject->load(['teachers.department', 'students.department', 'students.studentGroup']);
+
+        return Inertia::render('subjects/show', [
+            'subject' => (new SubjectResource($subject->loadMissing([
+                'teachers.department',
+                'students.department',
+                'students.studentGroup'
+            ]))),
+        ]);
     }
 
     /**

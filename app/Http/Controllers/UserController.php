@@ -105,7 +105,11 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        $user->load(['department', 'subjects']);
+
+        return Inertia::render('users/show', [
+            'user' => new UserResource($user),
+        ]);
     }
 
     /**

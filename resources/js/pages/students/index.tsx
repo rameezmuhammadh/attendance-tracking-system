@@ -397,6 +397,9 @@ export default function Index({ students, departments, studentGroups, params }: 
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end" className="w-32">
                                                             <DropdownMenuItem asChild>
+                                                                <Link href={route('students.show', student.id)}>View</Link>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem asChild>
                                                                 <Link href={route('students.edit', student.id)}>Edit</Link>
                                                             </DropdownMenuItem>
                                                             <DropdownMenuItem onClick={() => confirmDelete(student)}>Delete</DropdownMenuItem>

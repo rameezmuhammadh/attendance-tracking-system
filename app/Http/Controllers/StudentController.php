@@ -7,9 +7,11 @@ use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Resources\DepartmentResource;
 use App\Http\Resources\StudentResource;
 use App\Http\Resources\StudentGroupResource;
+use App\Http\Resources\SubjectResource;
 use App\Models\Department;
 use App\Models\StudentGroup;
 use App\Models\Student;
+use App\Models\Subject;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -78,10 +80,12 @@ class StudentController extends Controller
     {
         $departments = Department::all();
         $studentGroups = StudentGroup::all();
+        $subjects = Subject::all();
 
         return Inertia::render('students/create', [
             'departments' => DepartmentResource::collection($departments),
             'studentGroups' => StudentGroupResource::collection($studentGroups),
+            'subjects' => SubjectResource::collection($subjects),
         ]);
     }
 
@@ -91,9 +95,24 @@ class StudentController extends Controller
     public function store(StoreStudentRequest $request)
     {
         $validatedData = $request->validated();
+        $subjectIds = $validatedData['subject_ids'] ?? [];
+
+        // Remove subject_ids from validatedData as it's not a direct column in students table
+        if (isset($validatedData['subject_ids'])) {
+            unset($validatedData['subject_ids']);
+        }
 
         // Create the student
-        Student::create($validatedData);
+        $student = Student::create($validatedData);
+
+        // Attach subjects to the student with current date as enrollment date
+        if (!empty($subjectIds)) {
+            $pivotData = [];
+            foreach ($subjectIds as $subjectId) {
+                $pivotData[$subjectId] = ['enrollment_date' => now()->format('Y-m-d')];
+            }
+            $student->subjects()->attach($pivotData);
+        }
 
         return redirect()->route('students.index')->with('success', 'Student created successfully.');
     }
@@ -104,9 +123,11 @@ class StudentController extends Controller
     public function show(Student $student)
     {
         $student->load(['department', 'studentGroups', 'subjects', 'attendances']);
+        $subjects = Subject::all();
 
         return Inertia::render('students/show', [
             'student' => new StudentResource($student),
+            'subjects' => SubjectResource::collection($subjects),
         ]);
     }
 
@@ -117,11 +138,15 @@ class StudentController extends Controller
     {
         $departments = Department::all();
         $studentGroups = StudentGroup::all();
+        $subjects = Subject::all();
+
+        $student->load('subjects');
 
         return Inertia::render('students/edit', [
             'student' => new StudentResource($student),
             'departments' => DepartmentResource::collection($departments),
             'studentGroups' => StudentGroupResource::collection($studentGroups),
+            'subjects' => SubjectResource::collection($subjects),
         ]);
     }
 
@@ -131,9 +156,26 @@ class StudentController extends Controller
     public function update(UpdateStudentRequest $request, Student $student)
     {
         $validatedData = $request->validated();
+        $subjectIds = $validatedData['subject_ids'] ?? [];
+
+        // Remove subject_ids from validatedData as it's not a direct column in students table
+        if (isset($validatedData['subject_ids'])) {
+            unset($validatedData['subject_ids']);
+        }
 
         // Update the student
         $student->update($validatedData);
+
+        // Sync subjects for the student with current date as enrollment date for new subjects
+        if (!empty($subjectIds)) {
+            $pivotData = [];
+            foreach ($subjectIds as $subjectId) {
+                $pivotData[$subjectId] = ['enrollment_date' => now()->format('Y-m-d')];
+            }
+            $student->subjects()->sync($pivotData);
+        } else {
+            $student->subjects()->detach();
+        }
 
         return redirect()->route('students.index')->with('success', 'Student updated successfully.');
     }

@@ -27,6 +27,18 @@ class UpdateUserRequest extends FormRequest
             'password' => 'nullable|string|min:8|confirmed',
             'role' => 'required|in:teacher,admin',
             'department_id' => 'nullable|exists:departments,id',
+            'subject_ids' => 'nullable|array',
+            'subject_ids.*' => 'exists:subjects,id',
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     */
+    public function withValidator($validator)
+    {
+        $validator->sometimes('subject_ids', 'required|array|min:1|max:3', function ($input) {
+            return $input->role === 'teacher';
+        });
     }
 }

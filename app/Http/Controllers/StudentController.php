@@ -122,12 +122,15 @@ class StudentController extends Controller
      */
     public function show(Student $student)
     {
-        $student->load(['department', 'studentGroup', 'subjects', 'attendances']);
-        $subjects = Subject::all();
+        $student->load([
+            'department',
+            'studentGroup',
+            'subjects',
+            'attendances.subject'
+        ]);
 
         return Inertia::render('students/show', [
             'student' => new StudentResource($student),
-            'subjects' => SubjectResource::collection($subjects),
         ]);
     }
 

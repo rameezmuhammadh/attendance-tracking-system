@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreSubjectRequest;
+use App\Http\Requests\UpdateSubjectRequest;
 use App\Http\Resources\SubjectResource;
 use App\Models\Subject;
 use Illuminate\Http\Request;
@@ -48,15 +50,20 @@ class SubjectController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('subjects/create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreSubjectRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+
+        // Create the subject
+        Subject::create($validatedData);
+
+        return redirect()->route('subjects.index')->with('success', 'Subject created successfully.');
     }
 
     /**
@@ -72,15 +79,22 @@ class SubjectController extends Controller
      */
     public function edit(Subject $subject)
     {
-        //
+        return Inertia::render('subjects/edit', [
+            'subject' => new SubjectResource($subject),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Subject $subject)
+    public function update(UpdateSubjectRequest $request, Subject $subject)
     {
-        //
+        $validatedData = $request->validated();
+
+        // Update the subject
+        $subject->update($validatedData);
+
+        return redirect()->route('subjects.index')->with('success', 'Subject updated successfully.');
     }
 
     /**

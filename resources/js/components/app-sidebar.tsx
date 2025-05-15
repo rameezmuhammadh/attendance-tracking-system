@@ -24,7 +24,7 @@ const mainNavItems: NavItem[] = [
         icon: Folder,
     },
     {
-        title: 'Users',
+        title: 'Users - Teachers',
         href: '/users',
         icon: Users,
     },

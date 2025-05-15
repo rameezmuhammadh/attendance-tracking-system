@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\SubjectResource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -24,6 +25,12 @@ class UserResource extends JsonResource
             'department_id' => $this->department_id,
             'department' => $this->whenLoaded('department', function () {
                 return new DepartmentResource($this->department);
+            }),
+            'subjects' => $this->whenLoaded('subjects', function () {
+                return SubjectResource::collection($this->subjects);
+            }),
+            'subject_ids' => $this->whenLoaded('subjects', function () {
+                return $this->subjects->pluck('id');
             }),
             'email_verified_at' => $this->email_verified_at ? (new Carbon($this->email_verified_at))->format('Y-m-d H:i') : null,
             'created_at' => (new Carbon($this->created_at))->format('Y-m-d H:i'),

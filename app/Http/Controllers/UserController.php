@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\DepartmentResource;
+use App\Http\Resources\SubjectResource;
 use App\Http\Resources\UserResource;
 use App\Models\Department;
+use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -67,9 +69,11 @@ class UserController extends Controller
     public function create()
     {
         $departments = Department::all();
+        $subjects = Subject::all();
 
         return Inertia::render('users/create', [
             'departments' => DepartmentResource::collection($departments),
+            'subjects' => SubjectResource::collection($subjects),
         ]);
     }
 
@@ -84,7 +88,14 @@ class UserController extends Controller
         $validatedData['password'] = Hash::make($validatedData['password']);
 
         // Create the user
-        User::create($validatedData);
+        $user = User::create($validatedData);
+
+        // If user is a teacher and subjects are selected, attach them
+        if ($user->role === 'teacher' && isset($validatedData['subject_ids']) && is_array($validatedData['subject_ids'])) {
+            // Limit to maximum 3 subjects per teacher
+            $subjectIds = array_slice($validatedData['subject_ids'], 0, 3);
+            $user->subjects()->attach($subjectIds);
+        }
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
@@ -103,10 +114,12 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $departments = Department::all();
+        $subjects = Subject::all();
 
         return Inertia::render('users/edit', [
-            'user' => new UserResource($user),
+            'user' => new UserResource($user->load('subjects')),
             'departments' => DepartmentResource::collection($departments),
+            'subjects' => SubjectResource::collection($subjects),
         ]);
     }
 
@@ -126,6 +139,16 @@ class UserController extends Controller
 
         // Update the user
         $user->update($validatedData);
+
+        // Handle subject assignments for teachers
+        if ($user->role === 'teacher' && isset($validatedData['subject_ids'])) {
+            // Limit to maximum 3 subjects per teacher
+            $subjectIds = array_slice($validatedData['subject_ids'], 0, 3);
+            $user->subjects()->sync($subjectIds);
+        } elseif ($user->role !== 'teacher') {
+            // Remove all subjects if the user is not a teacher
+            $user->subjects()->detach();
+        }
 
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }

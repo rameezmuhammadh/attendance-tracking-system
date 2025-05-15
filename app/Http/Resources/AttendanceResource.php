@@ -19,7 +19,7 @@ class AttendanceResource extends JsonResource
             'id' => $this->id,
             'student_id' => $this->student_id,
             'subject_id' => $this->subject_id,
-            'date' => $this->date,
+            'date' => (new Carbon($this->date))->format('Y-m-d'),
             'is_present' => $this->is_present,
             'remarks' => $this->remarks,
             'subject' => new SubjectResource($this->whenLoaded('subject')),

@@ -13,18 +13,8 @@ class Subject extends Model
     protected $fillable = [
         'name',
         'code',
-        'credits',
-        'department_id',
         'description',
     ];
-
-    /**
-     * Get the department this subject belongs to
-     */
-    public function department()
-    {
-        return $this->belongsTo(Department::class);
-    }
 
     /**
      * Get the teachers for this subject

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentGroupController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserController;
@@ -20,6 +21,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/departments', DepartmentController::class);
     Route::resource('/users', UserController::class);
     Route::resource('/student-groups', StudentGroupController::class);
+    Route::resource('/students', StudentController::class);
 });
 
 require __DIR__ . '/settings.php';

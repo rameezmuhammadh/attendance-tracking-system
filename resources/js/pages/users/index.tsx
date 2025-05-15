@@ -340,6 +340,9 @@ export default function Index({ users, departments, params }: Props) {
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end" className="w-32">
                                                             <DropdownMenuItem asChild>
+                                                                <Link href={route('users.show', user.id)}>View</Link>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem asChild>
                                                                 <Link href={route('users.edit', user.id)}>Edit</Link>
                                                             </DropdownMenuItem>
                                                             <DropdownMenuItem onClick={() => confirmDelete(user)}>Delete</DropdownMenuItem>

@@ -279,7 +279,7 @@ export default function StudentGroupsIndex({ studentGroups, departments, params 
                                 </div>
                             </form>
                         </div>
-                        <div className="rounded-md border">
+                        <div className="rounded-md border px-2">
                             <Table>
                                 <TableHeader>
                                     <TableRow>

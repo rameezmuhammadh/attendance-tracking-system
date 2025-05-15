@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\Subject;
 use App\Http\Resources\AttendanceResource;
 use App\Http\Resources\DepartmentResource;
+use App\Http\Resources\StudentResource;
 use App\Http\Resources\SubjectResource;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -88,7 +89,29 @@ class AttendanceController extends Controller
      */
     public function create()
     {
-        //
+        $user = auth()->user();
+        $isTeacher = $user->role === 'teacher';
+
+        // Get subjects based on user role
+        if ($isTeacher) {
+            // For teachers, only show their assigned subjects
+            $subjects = $user->subjects;
+            $teachers = collect([$user]); // Only the current teacher
+        } else {
+            // For admins, show all subjects
+            $subjects = Subject::all();
+            $teachers = \App\Models\User::where('role', 'teacher')->get();
+        }
+
+        return Inertia::render('attendances/create', [
+            'subjects' => SubjectResource::collection($subjects),
+            'teachers' => $isTeacher ? null : $teachers->map(fn($teacher) => [
+                'id' => $teacher->id,
+                'name' => $teacher->name,
+            ]),
+            'authUserId' => $user->id,
+            'userRole' => $user->role,
+        ]);
     }
 
     /**
@@ -96,7 +119,61 @@ class AttendanceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'subject_id' => 'required|exists:subjects,id',
+            'date' => 'required|date',
+            'marked_by' => 'required|exists:users,id',
+            'attendances' => 'required|array',
+            'attendances.*.student_id' => 'required|exists:students,id',
+            'attendances.*.is_present' => 'required|boolean',
+        ]);
+
+        $user = auth()->user();
+
+        // Check if user is a teacher and the subject belongs to them
+        if ($user->role === 'teacher') {
+            $subjectBelongsToTeacher = $user->subjects->contains($validated['subject_id']);
+
+            if (!$subjectBelongsToTeacher) {
+                return response()->json([
+                    'message' => 'You are not authorized to mark attendance for this subject.'
+                ], 403);
+            }
+
+            // Ensure the marked_by is the authenticated teacher
+            if ($validated['marked_by'] != $user->id) {
+                return response()->json([
+                    'message' => 'As a teacher, you can only mark attendance as yourself.'
+                ], 403);
+            }
+        }
+
+        $attendances = [];
+        $date = $validated['date'];
+        $subjectId = $validated['subject_id'];
+        $markedBy = $validated['marked_by'];
+
+        // Process each attendance record
+        foreach ($validated['attendances'] as $attendance) {
+            $studentId = $attendance['student_id'];
+            $isPresent = $attendance['is_present'];
+
+            // Create or update attendance record
+            Attendance::updateOrCreate(
+                [
+                    'student_id' => $studentId,
+                    'subject_id' => $subjectId,
+                    'date' => $date,
+                ],
+                [
+                    'is_present' => $isPresent,
+                    'marked_by' => $markedBy,
+                ]
+            );
+        }
+
+        return redirect()->route('attendances.index')
+            ->with('message', 'Attendance recorded successfully.');
     }
 
     /**
@@ -129,5 +206,46 @@ class AttendanceController extends Controller
     public function destroy(Attendance $attendance)
     {
         //
+    }
+
+    /**
+     * Get students enrolled in a subject.
+     */
+    public function getStudentsBySubject(Request $request)
+    {
+        $validated = $request->validate([
+            'subject_id' => 'required|exists:subjects,id',
+            'date' => 'required|date',
+        ]);
+
+        $subject = Subject::findOrFail($validated['subject_id']);
+
+        // Get students enrolled in this subject
+        $students = $subject->students()
+            ->with('department')
+            ->orderBy('registration_number')
+            ->get();
+
+        // Check if there are already attendance records for these students on the given date
+        $existingAttendances = Attendance::where('subject_id', $validated['subject_id'])
+            ->where('date', $validated['date'])
+            ->pluck('is_present', 'student_id')
+            ->toArray();
+
+        // Create a simplified student array directly without using StudentResource
+        $studentsData = $students->map(function ($student) use ($existingAttendances) {
+            return [
+                'id' => $student->id,
+                'registration_number' => $student->registration_number,
+                'first_name' => $student->first_name,
+                'last_name' => $student->last_name,
+                'full_name' => $student->full_name,
+                'attendance_status' => $existingAttendances[$student->id] ?? null,
+            ];
+        })->toArray();
+
+        return response()->json([
+            'students' => $studentsData,
+        ]);
     }
 }

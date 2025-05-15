@@ -1,6 +1,7 @@
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -16,21 +17,30 @@ interface Department {
     code: string;
 }
 
+interface Subject {
+    id: number;
+    name: string;
+    code: string;
+    description: string;
+}
+
 interface User {
     id: number;
     name: string;
     email: string;
-    role: 'teacher' | 'admin';
+    role: string;
     department_id: number | null;
     department?: Department;
+    subject_ids?: number[];
 }
 
 interface Props {
     user: User;
     departments: Department[];
+    subjects: Subject[];
 }
 
-export default function Edit({ user, departments }: Props) {
+export default function Edit({ user, departments, subjects }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
@@ -45,7 +55,6 @@ export default function Edit({ user, departments }: Props) {
             href: `/users/${user.id}/edit`,
         },
     ];
-
     const { data, setData, put, processing, errors, reset } = useForm({
         name: user.name || '',
         email: user.email || '',
@@ -53,6 +62,7 @@ export default function Edit({ user, departments }: Props) {
         password_confirmation: '',
         role: user.role || 'teacher',
         department_id: user.department_id ? user.department_id.toString() : '',
+        subject_ids: user.subject_ids || [],
     });
 
     const [showPassword, setShowPassword] = useState(false);
@@ -181,7 +191,7 @@ export default function Edit({ user, departments }: Props) {
                                 <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2">
                                     <div className="grid gap-2">
                                         <Label htmlFor="role">Role</Label>
-                                        <Select value={data.role} onValueChange={(value) => setData('role', value)} disabled={processing}>
+                                        <Select value={data.role} onValueChange={(value: string) => setData('role', value)} disabled={processing}>
                                             <SelectTrigger id="role">
                                                 <SelectValue placeholder="Select a role" />
                                             </SelectTrigger>
@@ -192,7 +202,6 @@ export default function Edit({ user, departments }: Props) {
                                         </Select>
                                         <InputError message={errors.role} />
                                     </div>
-
                                     <div className="grid gap-2">
                                         <Label htmlFor="department">Department</Label>
                                         <Select
@@ -204,7 +213,8 @@ export default function Edit({ user, departments }: Props) {
                                                 <SelectValue placeholder="Select a department" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {departments.data.map((department) => (
+                                                {' '}
+                                                {departments.data.map((department: Department) => (
                                                     <SelectItem key={department.id} value={department.id.toString()}>
                                                         {department.name} ({department.code})
                                                     </SelectItem>
@@ -212,8 +222,49 @@ export default function Edit({ user, departments }: Props) {
                                             </SelectContent>
                                         </Select>
                                         <InputError message={errors.department_id} />
-                                    </div>
+                                    </div>{' '}
                                 </div>
+
+                                {/* Subject selection for teachers */}
+                                {data.role === 'teacher' && (
+                                    <div className="mt-4">
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="subject_ids">
+                                                Subjects <span className="text-sm text-gray-500">(Maximum 3)</span>
+                                            </Label>
+                                            <div className="grid grid-cols-3 gap-2 rounded-md border p-4">
+                                                {subjects.data.map((subject) => (
+                                                    <div key={subject.id} className="flex items-center space-x-2">
+                                                        <Checkbox
+                                                            id={`subject-${subject.id}`}
+                                                            checked={data.subject_ids.includes(subject.id)}
+                                                            onCheckedChange={(checked) => {
+                                                                if (checked) {
+                                                                    if (data.subject_ids.length < 3) {
+                                                                        setData('subject_ids', [...data.subject_ids, subject.id]);
+                                                                    }
+                                                                } else {
+                                                                    setData(
+                                                                        'subject_ids',
+                                                                        data.subject_ids.filter((id) => id !== subject.id),
+                                                                    );
+                                                                }
+                                                            }}
+                                                            disabled={
+                                                                processing || (data.subject_ids.length >= 3 && !data.subject_ids.includes(subject.id))
+                                                            }
+                                                        />
+                                                        <Label htmlFor={`subject-${subject.id}`} className="cursor-pointer">
+                                                            {subject.name} ({subject.code})
+                                                        </Label>
+                                                    </div>
+                                                ))}
+                                                {subjects.length === 0 && <p className="text-sm text-gray-500">No subjects available</p>}
+                                            </div>
+                                            <InputError message={errors.subject_ids} />
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div className="mt-6 flex items-center justify-end gap-4">
                                     <Button variant="outline" className="mt-2" disabled={processing}>

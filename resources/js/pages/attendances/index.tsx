@@ -340,7 +340,6 @@ export default function Index({ attendances, departments, subjects, params }: Pr
                                         <TableHead>Student</TableHead>
                                         <TableHead>Subject</TableHead>
                                         <TableHead>Status</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -373,28 +372,7 @@ export default function Index({ attendances, departments, subjects, params }: Pr
                                                         {attendance.is_present ? 'Present' : 'Absent'}
                                                     </Badge>
                                                 </TableCell>
-                                                <TableCell className="text-right">
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                                                <span className="sr-only">Open menu</span>
-                                                                <MoreVerticalIcon className="h-4 w-4" />
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end">
-                                                            <DropdownMenuItem>
-                                                                <Link href={route('attendances.edit', attendance.id)} className="w-full">
-                                                                    Edit
-                                                                </Link>
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem>
-                                                                <Link href={route('attendances.show', attendance.id)} className="w-full">
-                                                                    View Details
-                                                                </Link>
-                                                            </DropdownMenuItem>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </TableCell>
+                  
                                             </TableRow>
                                         ))
                                     )}

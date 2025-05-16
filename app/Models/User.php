@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'department_id',
     ];
 
     /**
@@ -44,5 +46,30 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the subjects taught by this teacher
+     */
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'subject_teacher')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the attendance records marked by this teacher
+     */
+    public function markedAttendances()
+    {
+        return $this->hasMany(Attendance::class, 'marked_by');
+    }
+
+    /**
+     * Get the department that this user belongs to
+     */
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
     }
 }

@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->enum('role', ['teacher', 'admin'])->default('teacher');
+            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('SET NULL');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

@@ -9,8 +9,10 @@ use App\Http\Resources\AttendanceResource;
 use App\Http\Resources\DepartmentResource;
 use App\Http\Resources\StudentResource;
 use App\Http\Resources\SubjectResource;
+use App\Http\Requests\StoreAttendanceRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
@@ -89,7 +91,7 @@ class AttendanceController extends Controller
      */
     public function create()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $isTeacher = $user->role === 'teacher';
 
         // Get subjects based on user role
@@ -117,18 +119,10 @@ class AttendanceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreAttendanceRequest $request)
     {
-        $validated = $request->validate([
-            'subject_id' => 'required|exists:subjects,id',
-            'date' => 'required|date',
-            'marked_by' => 'required|exists:users,id',
-            'attendances' => 'required|array',
-            'attendances.*.student_id' => 'required|exists:students,id',
-            'attendances.*.is_present' => 'required|boolean',
-        ]);
-
-        $user = auth()->user();
+        $validated = $request->validated();
+        $user = Auth::user();
 
         // Check if user is a teacher and the subject belongs to them
         if ($user->role === 'teacher') {

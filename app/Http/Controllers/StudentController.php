@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
+use App\Http\Resources\AttendanceResource;
 use App\Http\Resources\DepartmentResource;
 use App\Http\Resources\StudentResource;
 use App\Http\Resources\StudentGroupResource;
@@ -126,11 +127,16 @@ class StudentController extends Controller
             'department',
             'studentGroup',
             'subjects',
-            'attendances.subject'
         ]);
+
+        $attendances = $student->attendances()
+            ->with('subject')
+            ->latest()
+            ->paginate(10);
 
         return Inertia::render('students/show', [
             'student' => new StudentResource($student),
+            'attendances' => AttendanceResource::collection($attendances),
         ]);
     }
 

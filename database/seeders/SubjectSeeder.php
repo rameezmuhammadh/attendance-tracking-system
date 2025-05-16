@@ -18,82 +18,35 @@ class SubjectSeeder extends Seeder
         $faker = Factory::create();
 
         $subjects = [
-            ['name' => 'Introduction to Programming', 'code' => 'CS101'],
-            ['name' => 'Data Structures and Algorithms', 'code' => 'CS201'],
-            ['name' => 'Database Systems', 'code' => 'CS301'],
-            ['name' => 'Computer Networks', 'code' => 'CS401'],
-            ['name' => 'Operating Systems', 'code' => 'CS402'],
-            ['name' => 'Web Development', 'code' => 'CS403'],
-            ['name' => 'Software Engineering', 'code' => 'CS404'],
-            ['name' => 'Artificial Intelligence', 'code' => 'CS501'],
-
-            ['name' => 'Circuit Theory', 'code' => 'EE101'],
-            ['name' => 'Digital Logic Design', 'code' => 'EE201'],
-            ['name' => 'Signals and Systems', 'code' => 'EE301'],
-            ['name' => 'Microelectronics', 'code' => 'EE401'],
-            ['name' => 'Control Systems', 'code' => 'EE402'],
-            ['name' => 'Power Systems', 'code' => 'EE403'],
-            ['name' => 'Communication Systems', 'code' => 'EE404'],
-
-            ['name' => 'Mechanics of Materials', 'code' => 'ME101'],
-            ['name' => 'Thermodynamics', 'code' => 'ME201'],
-            ['name' => 'Fluid Mechanics', 'code' => 'ME301'],
-            ['name' => 'Machine Design', 'code' => 'ME401'],
-            ['name' => 'Heat Transfer', 'code' => 'ME402'],
-            ['name' => 'Manufacturing Processes', 'code' => 'ME403'],
-
-            ['name' => 'Structural Analysis', 'code' => 'CE101'],
-            ['name' => 'Geotechnical Engineering', 'code' => 'CE201'],
-            ['name' => 'Transportation Engineering', 'code' => 'CE301'],
-            ['name' => 'Environmental Engineering', 'code' => 'CE401'],
-            ['name' => 'Construction Management', 'code' => 'CE402'],
-
-            ['name' => 'Principles of Management', 'code' => 'BA101'],
-            ['name' => 'Financial Accounting', 'code' => 'BA201'],
-            ['name' => 'Marketing Management', 'code' => 'BA301'],
-            ['name' => 'Business Ethics', 'code' => 'BA401'],
-            ['name' => 'Strategic Management', 'code' => 'BA402'],
-            ['name' => 'Human Resource Management', 'code' => 'BA403'],
-
-            ['name' => 'Calculus I', 'code' => 'MATH101'],
-            ['name' => 'Linear Algebra', 'code' => 'MATH201'],
-            ['name' => 'Differential Equations', 'code' => 'MATH301'],
-            ['name' => 'Numerical Analysis', 'code' => 'MATH401'],
-            ['name' => 'Abstract Algebra', 'code' => 'MATH402'],
-
-            ['name' => 'Mechanics', 'code' => 'PHY101'],
-            ['name' => 'Electromagnetism', 'code' => 'PHY201'],
-            ['name' => 'Modern Physics', 'code' => 'PHY301'],
-            ['name' => 'Quantum Mechanics', 'code' => 'PHY401'],
-            ['name' => 'Thermodynamics and Statistical Mechanics', 'code' => 'PHY402'],
-
-            ['name' => 'General Chemistry', 'code' => 'CHEM101'],
-            ['name' => 'Organic Chemistry', 'code' => 'CHEM201'],
-            ['name' => 'Physical Chemistry', 'code' => 'CHEM301'],
-            ['name' => 'Inorganic Chemistry', 'code' => 'CHEM401'],
-            ['name' => 'Analytical Chemistry', 'code' => 'CHEM402'],
-
-            ['name' => 'Cell Biology', 'code' => 'BIO101'],
-            ['name' => 'Molecular Biology', 'code' => 'BIO201'],
-            ['name' => 'Genetics', 'code' => 'BIO301'],
-            ['name' => 'Ecology', 'code' => 'BIO401'],
-            ['name' => 'Evolutionary Biology', 'code' => 'BIO402'],
-
-            ['name' => 'Introduction to Psychology', 'code' => 'PSY101'],
-            ['name' => 'Cognitive Psychology', 'code' => 'PSY201'],
-            ['name' => 'Abnormal Psychology', 'code' => 'PSY301'],
-            ['name' => 'Social Psychology', 'code' => 'PSY401'],
-            ['name' => 'Developmental Psychology', 'code' => 'PSY402'],
+            ['name' => 'Introduction to Programming', 'code' => 'CS101', 'description' => 'Basic programming concepts and problem-solving'],
+            ['name' => 'Data Structures', 'code' => 'CS201', 'description' => 'Study of fundamental data structures and algorithms'],
+            ['name' => 'Database Systems', 'code' => 'CS301', 'description' => 'Database design and management'],
+            ['name' => 'Web Development', 'code' => 'CS401', 'description' => 'Front-end and back-end web development'],
+            ['name' => 'Software Engineering', 'code' => 'CS501', 'description' => 'Software development methodologies and practices'],
+            ['name' => 'Computer Networks', 'code' => 'CS601', 'description' => 'Network protocols and architecture'],
+            ['name' => 'Operating Systems', 'code' => 'CS701', 'description' => 'OS concepts and implementation'],
+            ['name' => 'Artificial Intelligence', 'code' => 'CS801', 'description' => 'AI algorithms and applications'],
+            ['name' => 'Machine Learning', 'code' => 'CS802', 'description' => 'ML algorithms and data analysis'],
+            ['name' => 'Cybersecurity', 'code' => 'CS901', 'description' => 'Security principles and practices'],
+            ['name' => 'Cloud Computing', 'code' => 'CS902', 'description' => 'Cloud services and deployment'],
+            ['name' => 'Mobile App Development', 'code' => 'CS903', 'description' => 'Mobile application development'],
+            ['name' => 'Data Science', 'code' => 'CS904', 'description' => 'Data analysis and visualization'],
+            ['name' => 'Computer Graphics', 'code' => 'CS905', 'description' => 'Graphics programming and design'],
+            ['name' => 'Software Testing', 'code' => 'CS906', 'description' => 'Testing methodologies and tools'],
+            ['name' => 'Big Data Analytics', 'code' => 'CS907', 'description' => 'Large-scale data processing'],
+            ['name' => 'Internet of Things', 'code' => 'CS908', 'description' => 'IoT systems and applications'],
+            ['name' => 'Blockchain Technology', 'code' => 'CS909', 'description' => 'Blockchain concepts and development'],
+            ['name' => 'Game Development', 'code' => 'CS910', 'description' => 'Game design and programming'],
+            ['name' => 'Natural Language Processing', 'code' => 'CS911', 'description' => 'NLP algorithms and applications'],
+            ['name' => 'Computer Vision', 'code' => 'CS912', 'description' => 'Image processing and analysis'],
+            ['name' => 'Distributed Systems', 'code' => 'CS913', 'description' => 'Distributed computing concepts'],
+            ['name' => 'Software Architecture', 'code' => 'CS914', 'description' => 'System design and architecture'],
+            ['name' => 'Human-Computer Interaction', 'code' => 'CS915', 'description' => 'UI/UX design principles'],
+            ['name' => 'Quantum Computing', 'code' => 'CS916', 'description' => 'Quantum computing fundamentals'],
         ];
 
         foreach ($subjects as $subject) {
-            Subject::create([
-                'name' => $subject['name'],
-                'code' => $subject['code'],
-                'description' => $faker->paragraph(3),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            Subject::create($subject);
         }
     }
 }

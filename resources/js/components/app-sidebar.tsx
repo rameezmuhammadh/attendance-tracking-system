@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, GraduationCap, LayoutGrid, Users } from 'lucide-react';
+import { BookOpen, Building2Icon, Folder, GraduationCap, LayoutGrid, PenIcon, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -12,6 +12,21 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: '/dashboard',
         icon: LayoutGrid,
+    },
+    {
+        title: 'Users - Teachers',
+        href: '/users',
+        icon: Users,
+    },
+    {
+        title: 'Students',
+        href: '/students',
+        icon: GraduationCap,
+    },
+    {
+        title: 'Attendance',
+        href: '/attendances',
+        icon: PenIcon,
     },
     {
         title: 'Subjects',
@@ -23,26 +38,13 @@ const mainNavItems: NavItem[] = [
         href: '/departments',
         icon: Folder,
     },
-    {
-        title: 'Users - Teachers',
-        href: '/users',
-        icon: Users,
-    },
+
     {
         title: 'Student Groups',
         href: '/student-groups',
-        icon: GraduationCap,
+        icon: Building2Icon,
     },
-    {
-        title: 'Students',
-        href: '/students',
-        icon: Users,
-    },
-    {
-        title: 'Attendance',
-        href: '/attendances',
-        icon: Users,
-    },
+
 ];
 
 const footerNavItems: NavItem[] = [];

@@ -91,6 +91,15 @@ php artisan serve
 
 Visit [http://localhost:8000](http://localhost:8000) to see the application in action!
 
+## 👤 Default Admin Login
+
+After running the database seeder, you can log in with the following admin credentials:
+
+```
+Email: admin@example.com
+Password: password
+```
+
 ## 📝 License
 
 This project is open-sourced under the [MIT license](https://opensource.org/licenses/MIT).

@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
+import CustomPagination from '@/components/ui/custom-pagination';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -20,7 +21,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Show({ student }: any) {
+export default function Show({ student, attendances }: any) {
+
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Student: ${student.full_name}`} />
@@ -119,35 +122,40 @@ export default function Show({ student }: any) {
                             <CardTitle>Attendance Records</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            {student.attendances && student.attendances.length > 0 ? (
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Date</TableHead>
-                                            <TableHead>Subject</TableHead>
-                                            <TableHead>Status</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {student.attendances.map((attendance: any) => (
-                                            <TableRow key={attendance.id}>
-                                                <TableCell>{attendance.date}</TableCell>
-                                                <TableCell>{attendance.subject?.name || 'Unknown'}</TableCell>
-                                                <TableCell>
-                                                    <Badge
-                                                        className={
-                                                            attendance.status === 'present'
-                                                                ? 'bg-green-100 text-green-800'
-                                                                : 'bg-red-100 text-red-800'
-                                                        }
-                                                    >
-                                                        {attendance.is_present ? 'Present' : 'Absent'}
-                                                    </Badge>
-                                                </TableCell>
+                            {attendances.data && attendances.data.length > 0 ? (
+                                <>
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Date</TableHead>
+                                                <TableHead>Subject</TableHead>
+                                                <TableHead>Status</TableHead>
                                             </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {attendances.data.map((attendance: any) => (
+                                                <TableRow key={attendance.id}>
+                                                    <TableCell>{attendance.date}</TableCell>
+                                                    <TableCell>{attendance.subject?.name || 'Unknown'}</TableCell>
+                                                    <TableCell>
+                                                        <Badge
+                                                            className={
+                                                                attendance.status === 'present'
+                                                                    ? 'bg-green-100 text-green-800'
+                                                                    : 'bg-red-100 text-red-800'
+                                                            }
+                                                        >
+                                                            {attendance.is_present ? 'Present' : 'Absent'}
+                                                        </Badge>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                    <div className="mt-4">
+                                        <CustomPagination links={attendances.meta.links} />
+                                    </div>
+                                </>
                             ) : (
                                 <div className="py-4 text-center text-gray-500">No attendance records found.</div>
                             )}

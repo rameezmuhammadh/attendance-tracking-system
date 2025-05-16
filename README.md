@@ -50,6 +50,12 @@ composer install
 npm install
 ```
 
+If you encounter compatibility issues with React 19, use the following command instead:
+
+```bash
+npm install --legacy-peer-deps
+```
+
 ### Step 4: Set up environment file
 
 ```bash

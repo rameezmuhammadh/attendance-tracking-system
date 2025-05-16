@@ -287,7 +287,6 @@ export default function StudentGroupsIndex({ studentGroups, departments, params 
                                         <TableHead>Name</TableHead>
                                         <TableHead>Department</TableHead>
                                         <TableHead className="hidden max-w-[200px] lg:table-cell">Description</TableHead>
-                                        <TableHead>Students</TableHead>
                                         <TableHead className="w-[100px]">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -315,12 +314,7 @@ export default function StudentGroupsIndex({ studentGroups, departments, params 
                                                         ? `${group.description.substring(0, 50)}...`
                                                         : group.description || '-'}
                                                 </TableCell>
-                                                <TableCell>
-                                                    <Badge>
-                                                        <GraduationCap className="mr-1 h-3 w-3" />
-                                                        {group.students_count || 0}
-                                                    </Badge>
-                                                </TableCell>
+                                                
                                                 <TableCell className="text-right">
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger asChild>
